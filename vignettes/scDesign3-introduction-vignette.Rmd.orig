@@ -43,7 +43,7 @@ In this tutorial, we will demostrate how to simulate a new dataset using a one-s
 The raw data is from the [scvelo](https://scvelo.readthedocs.io/scvelo.datasets.pancreas/), which describes pancreatic endocrinogenesis. We pre-select the top 1000 highly variable genes and filter out some cell types to ensure a **single trajectory**.
 
 ```{r, message=FALSE}
-example_sce <- readRDS((url("https://www.dropbox.com/s/p1mvl5osxp55sot/PANCREAS_sce.rds?raw=1")))
+example_sce <- readRDS((url("https://figshare.com/ndownloader/files/40581992")))
 print(example_sce)
 ```
 To save computational time, we only use the top 100 genes.
@@ -85,6 +85,7 @@ logcounts(simu_sce) <- log1p(counts(simu_sce))
 
 ## Visualization
 ```{r, message=FALSE, eval=TRUE}
+set.seed(123)
 compare_figure <- plot_reduceddim(ref_sce = example_sce, 
                                   sce_list = list(simu_sce), 
                                   name_vec = c("Reference", "scDesign3"),
@@ -130,6 +131,7 @@ PANCREAS_marginal <- fit_marginal(
 ```
 3. Fit a copula, obtain AIC and BIC.
 ```{r, message=FALSE, warning=FALSE, results='hide', eval=TRUE}
+set.seed(123)
 PANCREAS_copula <- fit_copula(
     sce = example_sce,
     assay_use = "counts",
@@ -157,11 +159,13 @@ PANCREAS_para <- extract_para(
     marginal_list = PANCREAS_marginal,
     n_cores = 1,
     family_use = "nb",
-    new_covariate = NULL
+    new_covariate = NULL,
+    data = PANCREAS_data$dat
   )
 ```
 5. Simulate the new count matrix.
 ```{r, message=FALSE, warning=FALSE, results='hide', eval=TRUE}
+set.seed(123)
  PANCREAS_newcount <- simu_new(
     sce = example_sce,
     mean_mat = PANCREAS_para$mean_mat,
@@ -186,6 +190,7 @@ logcounts(simu_sce) <- log1p(counts(simu_sce))
 
 ## Visualization
 ```{r, message=FALSE, eval=TRUE}
+set.seed(123)
 compare_figure <- plot_reduceddim(ref_sce = example_sce, 
                                   sce_list = list(simu_sce), 
                                   name_vec = c("Reference", "scDesign3"),
